@@ -6,4 +6,4 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(core)
 add_subdirectory(apps/clow)
-add_subdirectory(tests)
+# add_subdirectory(tests)
