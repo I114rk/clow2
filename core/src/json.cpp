@@ -162,6 +162,8 @@ JsonValue parseValue(std::string_view& text) {
     throw std::runtime_error("Invalid JSON token");
 }
 
+} // namespace
+
 JsonValue::JsonValue() noexcept : value_(nullptr) {}
 JsonValue::JsonValue(std::nullptr_t) noexcept : value_(nullptr) {}
 JsonValue::JsonValue(bool boolean) noexcept : value_(boolean) {}

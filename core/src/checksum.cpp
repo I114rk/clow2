@@ -3,6 +3,7 @@
 #include <array>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <windows.h>
 #include <wincrypt.h>
 

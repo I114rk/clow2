@@ -135,8 +135,10 @@ int Installer::launchShell(const std::string& key) {
         Logger::error("Distribution not installed: " + key);
         return 1;
     }
+    std::wstring command = L"cmd.exe /c echo Shell for ";
+    command += platform::toWide(key);
     int exitCode = 0;
-    platform::runProcess(platform::toWide(L"cmd.exe /c echo Shell for " + platform::toWide(key)), path.wstring(), exitCode);
+    platform::runProcess(command, path.wstring(), exitCode);
     return exitCode;
 }
 
@@ -146,8 +148,9 @@ int Installer::executeCommand(const std::string& key, const std::string& command
         Logger::error("Distribution not installed: " + key);
         return 1;
     }
+    std::wstring wideCommand = platform::toWide("cmd.exe /c " + command);
     int exitCode = 0;
-    platform::runProcess(platform::toWide("cmd.exe /c " + command), path.wstring(), exitCode);
+    platform::runProcess(wideCommand, path.wstring(), exitCode);
     return exitCode;
 }
 
