@@ -13,11 +13,16 @@ int CommandProcessor::execute() {
     Installer installer;
 
     if (command == "install") {
-        if (arguments.size() != 1) {
-            Logger::error("install requires exactly one distribution name");
+        if (arguments.empty()) {
+            Logger::error("install requires a distribution name");
             return 1;
         }
-        return installer.installDistribution(arguments[0]);
+        std::string name = arguments[0];
+        for (size_t i = 1; i < arguments.size(); ++i) {
+            name += ' ';
+            name += arguments[i];
+        }
+        return installer.installDistribution(name);
     }
     if (command == "shell") {
         if (arguments.size() != 1) {

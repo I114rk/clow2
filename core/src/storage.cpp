@@ -4,8 +4,48 @@
 
 namespace clow {
 
+namespace {
+
+bool hasManifests(const std::filesystem::path& directory) noexcept {
+    std::error_code ec;
+    return std::filesystem::is_directory(directory, ec);
+}
+
+std::filesystem::path searchUpwards(std::filesystem::path start) noexcept {
+    for (int depth = 0; depth < 6 && !start.empty(); ++depth) {
+        const auto candidate = start / "distros";
+        if (hasManifests(candidate)) {
+            return candidate;
+        }
+        const auto parent = start.parent_path();
+        if (parent == start) {
+            break;
+        }
+        start = parent;
+    }
+    return {};
+}
+
+} // namespace
+
 std::filesystem::path Storage::distrosDirectory() noexcept {
-    return std::filesystem::current_path() / ".." / ".." / "distros";
+    std::error_code ec;
+
+    try {
+        const auto fromExecutable = searchUpwards(platform::executablePath().parent_path());
+        if (!fromExecutable.empty()) {
+            return fromExecutable;
+        }
+    } catch (...) {
+        // Fall through to the working-directory search below.
+    }
+
+    const auto fromWorkingDirectory = searchUpwards(std::filesystem::current_path(ec));
+    if (!ec && !fromWorkingDirectory.empty()) {
+        return fromWorkingDirectory;
+    }
+
+    return std::filesystem::path("distros");
 }
 
 std::filesystem::path Storage::runtimeDirectory() noexcept {

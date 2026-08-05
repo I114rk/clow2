@@ -7,6 +7,7 @@
 #include "clow/platform.hpp"
 #include "clow/storage.hpp"
 #include <fstream>
+#include <cctype>
 #include <stdexcept>
 
 namespace clow {
@@ -22,13 +23,39 @@ static std::vector<DistroManifest> loadAvailableDistros() {
     return result;
 }
 
+static std::string normalizeKey(std::string_view text) {
+    std::string result;
+    result.reserve(text.size());
+    for (const char character : text) {
+        const auto raw = static_cast<unsigned char>(character);
+        if (raw == ' ' || raw == '-' || raw == '_') {
+            continue;
+        }
+        result.push_back(static_cast<char>(std::tolower(raw)));
+    }
+    return result;
+}
+
 DistroManifest Installer::findDistro(const std::string& key) const {
-    for (auto const& distro : loadAvailableDistros()) {
-        if (distro.key() == key) {
+    const auto wanted = normalizeKey(key);
+    const auto available = loadAvailableDistros();
+    for (auto const& distro : available) {
+        if (normalizeKey(distro.key()) == wanted || normalizeKey(distro.name()) == wanted) {
             return distro;
         }
     }
-    throw std::runtime_error("Distribution not found: " + key);
+
+    std::string message = "Distribution not found: " + key;
+    if (available.empty()) {
+        message += " (no manifests found in " + Storage::distrosDirectory().string() + ")";
+    } else {
+        message += " (available:";
+        for (auto const& distro : available) {
+            message += ' ' + distro.key();
+        }
+        message += ")";
+    }
+    throw std::runtime_error(message);
 }
 
 void Installer::writeInstanceMetadata(const std::filesystem::path& instancePath, const DistroManifest& manifest) const {
@@ -68,14 +95,14 @@ int Installer::installDistribution(const std::string& key) {
         Logger::error("Unable to ensure storage directories");
         return 1;
     }
-    const auto instancePath = Storage::instancePath(key);
+    const auto instancePath = Storage::instancePath(distro.key());
     if (!platform::ensureDirectory(instancePath)) {
         Logger::error("Unable to create distribution instance directory");
         return 1;
     }
     writeInstanceMetadata(instancePath, distro);
     saveInstanceConfiguration(instancePath, Configuration::defaultConfiguration());
-    Logger::info("Installed distribution: " + distro.name());
+    Logger::info("Installed distribution: " + distro.name() + " (" + distro.key() + ")");
     return 0;
 }
 

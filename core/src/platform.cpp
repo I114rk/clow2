@@ -16,6 +16,21 @@ std::filesystem::path appDataPath() {
     return std::filesystem::path(path) / L"CLOW";
 }
 
+std::filesystem::path executablePath() {
+    std::wstring buffer(MAX_PATH, L'\0');
+    while (true) {
+        const DWORD written = GetModuleFileNameW(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
+        if (written == 0) {
+            throw std::runtime_error("Unable to resolve executable path");
+        }
+        if (written < buffer.size()) {
+            buffer.resize(written);
+            return std::filesystem::path(buffer);
+        }
+        buffer.resize(buffer.size() * 2);
+    }
+}
+
 bool ensureDirectory(const std::filesystem::path& directory) noexcept {
     std::error_code ec;
     std::filesystem::create_directories(directory, ec);

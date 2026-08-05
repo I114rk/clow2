@@ -1,5 +1,8 @@
 #include "clow/logger.hpp"
 #include <iostream>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace clow {
 
@@ -11,8 +14,32 @@ constexpr const char* errorColor = "\x1b[31m";
 constexpr const char* progressColor = "\x1b[36m";
 constexpr const char* resetColor = "\x1b[0m";
 
+/// Legacy cmd.exe prints escape sequences literally unless the console opts in.
+bool colorsSupported() noexcept {
+#ifdef _WIN32
+    static const bool enabled = [] {
+        const HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (console == INVALID_HANDLE_VALUE || console == nullptr) {
+            return false;
+        }
+        DWORD mode = 0;
+        if (!GetConsoleMode(console, &mode)) {
+            return false;
+        }
+        return SetConsoleMode(console, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0;
+    }();
+    return enabled;
+#else
+    return true;
+#endif
+}
+
 void write(std::string_view prefix, std::string_view message, const char* color) noexcept {
-    std::cout << color << prefix << resetColor << " " << message << '\n';
+    if (colorsSupported()) {
+        std::cout << color << prefix << resetColor << " " << message << '\n';
+    } else {
+        std::cout << prefix << " " << message << '\n';
+    }
 }
 
 } // namespace
