@@ -1,0 +1,9 @@
+{
+  "name": "Arch Linux",
+  "version": "rolling",
+  "rootfs": "https://mirror.rackspace.com/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.gz",
+  "checksum": "sha256:3eaf8855e0ca1e40f9bd4c17a0c2bc0ed774d572e03c3e4b98670b1bb6b4a115",
+  "default_ram": 2048,
+  "default_cpu": 4,
+  "default_disk": 20
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Ubuntu",
+  "version": "22.04",
+  "rootfs": "https://partner-images.canonical.com/core/jammy/current/ubuntu-22.04-core-amd64.tar.gz",
+  "checksum": "sha256:da15f4b5e734fd6a7a882d57988abe2606a5a0ec65d1a6b12693895d1e7a4f60",
+  "default_ram": 4096,
+  "default_cpu": 4,
+  "default_disk": 20
+}

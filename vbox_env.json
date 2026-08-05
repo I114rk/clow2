@@ -1,0 +1,12 @@
+{
+    "vbox_path": "C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe",
+    "vm_name": "arch",
+    "ssh_user": "i114rk",
+    "ssh_port": "2222",
+    "mount_point": "/workspace",
+    "lang": "ru",
+    "network_drive": "L:",
+    "smb_path": "\\\\192.168.56.102\\arch",
+    "smb_user": "i114rk",
+    "smb_pass": "1"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Debian",
+  "version": "bookworm",
+  "rootfs": "https://cdimage.debian.org/cdimage/ports/latest/amd64/rootfs.tar.gz",
+  "checksum": "sha256:5d3f78a01f879aa88b0a36b2f8eb6b4c0dd718c96dcd5fc5710b1da3df41f89d",
+  "default_ram": 4096,
+  "default_cpu": 4,
+  "default_disk": 20
+}

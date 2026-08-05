@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          choco install mingw
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -G "MinGW Makefiles" ..
+      - name: Build
+        run: |
+          cd build
+          mingw32-make -j2
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure
